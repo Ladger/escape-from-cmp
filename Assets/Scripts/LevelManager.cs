@@ -13,6 +13,7 @@ public class LevelManager : Singleton<LevelManager>
     [SerializeField] private GameObject finishPrefab;
 
     private List<Map> maps = new();
+    private Map currentMap;
     private Vector2 playerStartPos;
 
     protected override void Awake()
@@ -20,8 +21,6 @@ public class LevelManager : Singleton<LevelManager>
         base.Awake();
 
         LoadMaps("Assets/Resources/maps.txt");
-        BuildMap(0);
-
     }
 
     private void LoadMaps(string filePath)
@@ -47,10 +46,10 @@ public class LevelManager : Singleton<LevelManager>
                 for (int x = 0; x < line.Length; x++)
                 {
                     // Map characters to ElementType
-                    ElementType type = ElementType.Blockage;
-                    if (line[x] == ' ') type = ElementType.Path;
-                    if (line[x] == 'F') type = ElementType.Finish;
-                    if (line[x] == 'P') type = ElementType.Player;
+                    TileType type = TileType.Blockage;
+                    if (line[x] == ' ') type = TileType.Path;
+                    if (line[x] == 'F') type = TileType.Finish;
+                    if (line[x] == 'P') type = TileType.Player;
 
                     Vector2 position = new Vector2(x, -y);
                     Tile tile = new Tile(position, type);
@@ -65,9 +64,10 @@ public class LevelManager : Singleton<LevelManager>
         }
     }
 
-    private void BuildMap(int mapIndex)
+    public void BuildMap(int mapIndex)
     {
         Map map = maps[mapIndex];
+        currentMap = map;
 
         for (int y = 0; y < map.rowCount; y++)
         {
@@ -79,13 +79,13 @@ public class LevelManager : Singleton<LevelManager>
                 Tile tile = map.tiles[y][x];
                 Vector3 worldPosition = new Vector3(tile.position.x * cellSize, tile.position.y * cellSize, 0);
 
-                switch (tile.elementType)
+                switch (tile.tileType)
                 {
-                    case ElementType.Blockage:
+                    case TileType.Blockage:
                         Instantiate(wallPrefab, worldPosition, Quaternion.identity);
                         break;
 
-                    case ElementType.Path:
+                    case TileType.Path:
                         if (x % 2 == checker)
                         {
                             Instantiate(pathPrefab, worldPosition, Quaternion.identity);
@@ -97,21 +97,20 @@ public class LevelManager : Singleton<LevelManager>
                         
                         break;
 
-                    case ElementType.Finish:
+                    case TileType.Finish:
                         Instantiate(finishPrefab, worldPosition, Quaternion.identity);
                         break;
 
-                    case ElementType.Player:
+                    case TileType.Player:
                         playerStartPos = worldPosition;
                         Instantiate(pathPrefab, worldPosition, Quaternion.identity);
-                        Instantiate(playerPrefab, worldPosition, Quaternion.identity);
                         break;
                 }
             }
         }
     }
 
-
+    public Map GetCurrentMap() { return currentMap; }
     public Vector2 GetPlayerStartPos() { return playerStartPos; }
     public float GetCellSize() { return cellSize; }
 }
@@ -128,21 +127,38 @@ public class Map
         this.rowCount = rowCount;
         this.columnCount = columnCount;
     }
+
+    public Tile GetTile(Vector2 tilePosition)
+    {
+        for (int row = 0; row < rowCount; row++)
+        {
+            for (int col = 0; col < columnCount; col++)
+            {
+                if (tiles[row][col].position == tilePosition)
+                {
+                    return tiles[row][col];
+                }
+            }
+        }
+
+        Debug.LogError("Tile has not found");
+        return null;
+    }
 }
 
 public class Tile
 {
     public Vector2 position;
-    public ElementType elementType;
+    public TileType tileType;
 
-    public Tile(Vector2 position, ElementType elementType)
+    public Tile(Vector2 position, TileType elementType)
     {
         this.position = position;
-        this.elementType = elementType;
+        this.tileType = elementType;
     }
 }
 
-public enum ElementType
+public enum TileType
 {
     Blockage,
     Path,
