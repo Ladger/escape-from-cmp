@@ -1,19 +1,29 @@
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    private Map currentMap;
-    private float cellSize;
+    private LevelManager _levelMan;
+    private Map _currentMap;
+    private Tile _currentTile;
+    private float _cellSize;
 
     private void Start()
     {
-        LevelManager levelMan = LevelManager._instance;
-        cellSize = levelMan.GetCellSize();
-        currentMap = levelMan.GetCurrentMap();
+        ActionManager._instance.onMazeChange += OnMazeChange;
+        _levelMan = LevelManager._instance;
+        _cellSize = _levelMan.GetCellSize();
+        _currentMap = _levelMan.GetCurrentMap();
 
-        transform.position = (Vector3)levelMan.GetPlayerStartPos();
+        _currentTile = null;
+        transform.position = (Vector3)_levelMan.GetPlayerStartPos();
+    }
+
+    private void OnDestroy()
+    {
+        ActionManager._instance.onMazeChange -= OnMazeChange;
     }
 
     // Update is called once per frame
@@ -27,12 +37,15 @@ public class PlayerMovement : MonoBehaviour
 
     private void Move(Vector2 vector)
     {
-        if (IsMoveable(vector)) { transform.position += (Vector3)vector * cellSize; }
+     
+        if (IsMoveable(vector)) { 
+            transform.position += (Vector3)vector * _cellSize;
+        }
     }
 
     private bool IsMoveable(Vector2 vector)
     {
-        Tile tile = currentMap.GetTile(transform.position + (Vector3)vector);
+        Tile tile = _currentMap.GetTile(transform.position + (Vector3)vector);
         
         if (tile.tileType == TileType.Blockage)
         {
@@ -40,7 +53,19 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
+            if (tile.tileType == TileType.Finish)
+            {
+                ActionManager._instance.onMazeFinish?.Invoke();
+            }
+            
+            _currentTile = tile;
             return true;
         }
+    }
+
+    private void OnMazeChange()
+    {
+        _currentMap = _levelMan.GetCurrentMap();
+        transform.position = (Vector3)_levelMan.GetPlayerStartPos();
     }
 }

@@ -64,8 +64,22 @@ public class LevelManager : Singleton<LevelManager>
         }
     }
 
-    public void BuildMap(int mapIndex)
+    public void BuildMap(int mapIndex, Transform parent = null)
     {
+        if (maps.Count == 0)
+        {
+            Debug.LogError("No map exists to build.");
+            return;
+        }
+
+        if (maps.Count == mapIndex)
+        {
+            Debug.LogError("There is no more maps to build.");
+            return;
+        }
+
+
+        parent = gameObject.transform;
         Map map = maps[mapIndex];
         currentMap = map;
 
@@ -82,32 +96,42 @@ public class LevelManager : Singleton<LevelManager>
                 switch (tile.tileType)
                 {
                     case TileType.Blockage:
-                        Instantiate(wallPrefab, worldPosition, Quaternion.identity);
+                        Instantiate(wallPrefab, worldPosition, Quaternion.identity, parent);
                         break;
 
                     case TileType.Path:
                         if (x % 2 == checker)
                         {
-                            Instantiate(pathPrefab, worldPosition, Quaternion.identity);
+                            Instantiate(pathPrefab, worldPosition, Quaternion.identity, parent);
                         }
                         else
                         {
-                            Instantiate(pathPrefab2, worldPosition, Quaternion.identity);
+                            Instantiate(pathPrefab2, worldPosition, Quaternion.identity, parent);
                         }
                         
                         break;
 
                     case TileType.Finish:
-                        Instantiate(finishPrefab, worldPosition, Quaternion.identity);
+                        Instantiate(finishPrefab, worldPosition, Quaternion.identity, parent);
                         break;
 
                     case TileType.Player:
                         playerStartPos = worldPosition;
-                        Instantiate(pathPrefab, worldPosition, Quaternion.identity);
+                        Instantiate(pathPrefab, worldPosition, Quaternion.identity, parent);
                         break;
                 }
             }
         }
+    }
+
+    public void ClearMap()
+    {
+        foreach (Transform child in gameObject.transform)
+        {
+            Destroy(child.gameObject);
+        }
+
+        currentMap = null;
     }
 
     public Map GetCurrentMap() { return currentMap; }
