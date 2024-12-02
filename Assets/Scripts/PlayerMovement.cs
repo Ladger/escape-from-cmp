@@ -32,7 +32,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        if (_isMoving) return; // Prevent new input while moving
+        if (_isMoving) return;
 
         if (Input.GetKeyDown(KeyCode.W)) { Move(Vector2.up); }
         else if (Input.GetKeyDown(KeyCode.S)) { Move(Vector2.down); }

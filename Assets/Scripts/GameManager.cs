@@ -1,3 +1,4 @@
+using NaughtyAttributes;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,6 +8,12 @@ public class GameManager : Singleton<GameManager>
     private int mapCounter = 0;
 
     private void Start()
+    {
+        BuildMap(mapCounter);
+    }
+
+    [Button]
+    public void BuildMap(int mapIndex = 0)
     {
         LevelManager._instance.BuildMap(mapCounter);
     }

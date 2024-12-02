@@ -689,7 +689,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7338304309451086666, guid: 38400c30f9d23c243a1dd9d4acb15f03, type: 3}
       propertyPath: m_Name
-      value: TransitionBackground
+      value: BackgroundController
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 38400c30f9d23c243a1dd9d4acb15f03, type: 3}

@@ -5,30 +5,29 @@ using UnityEngine;
 
 public class BackgroundController : MonoBehaviour
 {
-    [SerializeField] private float animationDuration = 0.5f;
-
-    private RectTransform _rect;
+    [Header("Map Transition")]
+    [SerializeField] private RectTransform mapTransitionRect;
+    [SerializeField] private float mapTransitionAnimationDuration = 0.5f;
 
     void Start()
     {
-        _rect = GetComponent<RectTransform>();
-        _rect.localScale = Vector3.zero;
+        mapTransitionRect.localScale = Vector3.zero;
 
-        ActionManager._instance.onMazeFinish += StartTransition;   
+        ActionManager._instance.onMazeFinish += StartMapTransition;   
     }
 
     private void OnDestroy()
     {
-        ActionManager._instance.onMazeFinish -= StartTransition;
+        ActionManager._instance.onMazeFinish -= StartMapTransition;
     }
 
-    private void StartTransition()
+    private void StartMapTransition()
     {
-        _rect.DOScale(Vector3.one, animationDuration)
+        mapTransitionRect.DOScale(Vector3.one, mapTransitionAnimationDuration)
             .OnComplete(() => 
             {
                 GameManager._instance.ChangeMap();
-                _rect.DOScale(Vector3.zero, animationDuration);
+                mapTransitionRect.DOScale(Vector3.zero, mapTransitionAnimationDuration);
             });
     }
 }
