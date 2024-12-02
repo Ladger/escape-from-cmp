@@ -168,6 +168,35 @@ public class Map
         Debug.LogError("Tile has not found");
         return null;
     }
+
+    public bool IsCrossroad(Vector2 position)
+    {
+        int roadCount = 0;
+        float cellSize = LevelManager._instance.GetCellSize();
+
+        if (GetTile(position + Vector2.up * cellSize).tileType == TileType.Path) { roadCount++; }
+        if (GetTile(position + Vector2.down * cellSize).tileType == TileType.Path) { roadCount++; }
+        if (GetTile(position + Vector2.right * cellSize).tileType == TileType.Path) { roadCount++; }
+        if (GetTile(position + Vector2.left * cellSize).tileType == TileType.Path) { roadCount++; }
+
+
+        if (roadCount > 2) { return true; }
+        else { return false; }
+    }
+
+    public bool IsDeadEnd(Vector2 position)
+    {
+        int blockageCount = 0;
+        float cellSize = LevelManager._instance.GetCellSize();
+
+        if (GetTile(position + Vector2.up * cellSize).tileType == TileType.Blockage) { blockageCount++; }
+        if (GetTile(position + Vector2.down * cellSize).tileType == TileType.Blockage) { blockageCount++; }
+        if (GetTile(position + Vector2.right * cellSize).tileType == TileType.Blockage) { blockageCount++; }
+        if (GetTile(position + Vector2.left * cellSize).tileType == TileType.Blockage) { blockageCount++; }
+
+        if (blockageCount > 2) { return true; }
+        else return false;
+    }
 }
 
 public class Tile

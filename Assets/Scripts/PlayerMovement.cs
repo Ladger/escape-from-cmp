@@ -7,6 +7,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float _moveSpeed = 5f; // Adjust this value to change the horizontal movement speed
     [SerializeField] private float _peakHeight = 0.5f; // Adjust this value to control how high the player rises
 
+    private Portal _currentPortal;
     private LevelManager _levelMan;
     private Map _currentMap;
     private Tile _currentTile;
@@ -21,6 +22,7 @@ public class PlayerMovement : MonoBehaviour
         _cellSize = _levelMan.GetCellSize();
         _currentMap = _levelMan.GetCurrentMap();
 
+        _currentPortal = null;
         _currentTile = null;
         transform.position = (Vector3)_levelMan.GetPlayerStartPos();
     }
@@ -65,6 +67,10 @@ public class PlayerMovement : MonoBehaviour
         }
 
         transform.position = end;
+
+        if (_currentMap.IsCrossroad(transform.position)) { Debug.Log("It is crossroad."); }
+        if (_currentMap.IsDeadEnd(transform.position)) { Debug.Log("It is deadend."); }
+
         _isMoving = false;
     }
 
@@ -86,6 +92,13 @@ public class PlayerMovement : MonoBehaviour
             _currentTile = tile;
             return true;
         }
+    }
+
+    
+
+    private void SetPortal(Vector2 position)
+    {
+
     }
 
     private void OnMazeChange()

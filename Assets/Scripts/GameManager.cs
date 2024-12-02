@@ -12,7 +12,6 @@ public class GameManager : Singleton<GameManager>
         BuildMap(mapCounter);
     }
 
-    [Button]
     public void BuildMap(int mapIndex = 0)
     {
         LevelManager._instance.BuildMap(mapCounter);
