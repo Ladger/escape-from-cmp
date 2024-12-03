@@ -171,6 +171,8 @@ public class Map
 
     public bool IsCrossroad(Vector2 position)
     {
+        if (GetTile(position).tileType == TileType.Finish) { return false; }
+
         int roadCount = 0;
         float cellSize = LevelManager._instance.GetCellSize();
 
@@ -186,6 +188,8 @@ public class Map
 
     public bool IsDeadEnd(Vector2 position)
     {
+        if (GetTile(position).tileType == TileType.Finish) { return false; }
+
         int blockageCount = 0;
         float cellSize = LevelManager._instance.GetCellSize();
 

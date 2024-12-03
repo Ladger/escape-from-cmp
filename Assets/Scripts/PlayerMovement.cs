@@ -6,6 +6,7 @@ public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private float _moveSpeed = 5f; // Adjust this value to change the horizontal movement speed
     [SerializeField] private float _peakHeight = 0.5f; // Adjust this value to control how high the player rises
+    [SerializeField] private GameObject portalPrefab;
 
     private Portal _currentPortal;
     private LevelManager _levelMan;
@@ -13,6 +14,7 @@ public class PlayerMovement : MonoBehaviour
     private Tile _currentTile;
     private float _cellSize;
     private bool _isMoving = false;
+    private bool _canMove = true;
    
 
     private void Start()
@@ -34,7 +36,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        if (_isMoving) return;
+        if (_isMoving || !_canMove) return;
 
         if (Input.GetKeyDown(KeyCode.W)) { Move(Vector2.up); }
         else if (Input.GetKeyDown(KeyCode.S)) { Move(Vector2.down); }
@@ -48,6 +50,11 @@ public class PlayerMovement : MonoBehaviour
         {
             StartCoroutine(ParabolicMove(transform.position, transform.position + (Vector3)vector * _cellSize));
         }
+    }
+
+    private void Teleport()
+    {
+
     }
 
     private IEnumerator ParabolicMove(Vector3 start, Vector3 end)
@@ -68,8 +75,9 @@ public class PlayerMovement : MonoBehaviour
 
         transform.position = end;
 
-        if (_currentMap.IsCrossroad(transform.position)) { Debug.Log("It is crossroad."); }
-        if (_currentMap.IsDeadEnd(transform.position)) { Debug.Log("It is deadend."); }
+        // When Movement is Ended
+        if (_currentMap.IsCrossroad(transform.position)) { OnCrossroad(); }
+        if (_currentMap.IsDeadEnd(transform.position)) { OnDeadend(); }
 
         _isMoving = false;
     }
@@ -86,6 +94,7 @@ public class PlayerMovement : MonoBehaviour
         {
             if (tile.tileType == TileType.Finish)
             {
+                _canMove = false;
                 ActionManager._instance.onMazeFinish?.Invoke();
             }
 
@@ -94,16 +103,31 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    
-
-    private void SetPortal(Vector2 position)
+    private void OnDeadend()
     {
+        if (_currentPortal != null)
+        {
+            _currentPortal.SetPortalState(true);
+        }
+    }
 
+    private void OnCrossroad()
+    {
+        if (_currentPortal != null)
+        {
+            Destroy(_currentPortal.gameObject);
+            _currentPortal = null;
+        }
+
+        GameObject currentPortalGO = Instantiate(portalPrefab, transform.position, Quaternion.identity);
+        _currentPortal = currentPortalGO.GetComponent<Portal>();
     }
 
     private void OnMazeChange()
     {
         _currentMap = _levelMan.GetCurrentMap();
         transform.position = (Vector3)_levelMan.GetPlayerStartPos();
+
+        _canMove = true;
     }
 }
