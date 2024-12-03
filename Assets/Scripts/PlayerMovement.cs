@@ -39,9 +39,10 @@ public class PlayerMovement : MonoBehaviour
         if (_isMoving || !_canMove) return;
 
         if (Input.GetKeyDown(KeyCode.W)) { Move(Vector2.up); }
-        else if (Input.GetKeyDown(KeyCode.S)) { Move(Vector2.down); }
-        else if (Input.GetKeyDown(KeyCode.D)) { Move(Vector2.right); }
-        else if (Input.GetKeyDown(KeyCode.A)) { Move(Vector2.left); }
+        if (Input.GetKeyDown(KeyCode.S)) { Move(Vector2.down); }
+        if (Input.GetKeyDown(KeyCode.D)) { Move(Vector2.right); }
+        if (Input.GetKeyDown(KeyCode.A)) { Move(Vector2.left); }
+        if (Input.GetKeyDown(KeyCode.Space)) { Teleport(); }
     }
 
     private void Move(Vector2 vector)
@@ -54,7 +55,13 @@ public class PlayerMovement : MonoBehaviour
 
     private void Teleport()
     {
+        if (_currentPortal.IsPortalOpen())
+        {
+            ActionManager._instance.onTeleport?.Invoke();
 
+            transform.position = _currentPortal.GetPosition();
+            _currentPortal.SetPortalState(false);
+        }
     }
 
     private IEnumerator ParabolicMove(Vector3 start, Vector3 end)
@@ -94,6 +101,9 @@ public class PlayerMovement : MonoBehaviour
         {
             if (tile.tileType == TileType.Finish)
             {
+                Destroy(_currentPortal.gameObject);
+                _currentPortal = null;
+
                 _canMove = false;
                 ActionManager._instance.onMazeFinish?.Invoke();
             }
