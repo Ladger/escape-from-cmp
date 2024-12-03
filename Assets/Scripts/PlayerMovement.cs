@@ -8,6 +8,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float _peakHeight = 0.5f; // Adjust this value to control how high the player rises
     [SerializeField] private GameObject portalPrefab;
 
+    private Transform _cameraTarget;
     private Portal _currentPortal;
     private LevelManager _levelMan;
     private Map _currentMap;
@@ -19,6 +20,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void Start()
     {
+        _cameraTarget = GameObject.FindGameObjectWithTag("CameraTarget").GetComponent<Transform>();
+
         ActionManager._instance.onMazeChange += OnMazeChange;
         _levelMan = LevelManager._instance;
         _cellSize = _levelMan.GetCellSize();
@@ -27,6 +30,7 @@ public class PlayerMovement : MonoBehaviour
         _currentPortal = null;
         _currentTile = null;
         transform.position = (Vector3)_levelMan.GetPlayerStartPos();
+        _cameraTarget.position = transform.position;
     }
 
     private void OnDestroy()
@@ -60,6 +64,8 @@ public class PlayerMovement : MonoBehaviour
             ActionManager._instance.onTeleport?.Invoke();
 
             transform.position = _currentPortal.GetPosition();
+            _cameraTarget.position = transform.position;
+
             _currentPortal.SetPortalState(false);
         }
     }
@@ -81,6 +87,8 @@ public class PlayerMovement : MonoBehaviour
         }
 
         transform.position = end;
+
+        _cameraTarget.position = transform.position;
 
         // When Movement is Ended
         if (_currentMap.IsCrossroad(transform.position)) { OnCrossroad(); }
