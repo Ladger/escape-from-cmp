@@ -7,8 +7,9 @@ using UnityEngine.UI;
 public class BackgroundController : MonoBehaviour
 {
     [Header("Map Transition")]
-    [SerializeField] private RectTransform mapTransitionRect;
-    [SerializeField] private float mapTransitionAnimationDuration = 0.5f;
+    [SerializeField] private Image mapTransition;
+    [SerializeField] private float mapStartTransitionDuration = 0.1f;
+    [SerializeField] private float mapEndTransitionDuration = 0.3f;
 
     [Header("Teleport Effect")]
     [SerializeField] private Image teleportBG;
@@ -18,7 +19,6 @@ public class BackgroundController : MonoBehaviour
     void Start()
     {
         teleportBG.gameObject.SetActive(false);
-        mapTransitionRect.localScale = Vector3.zero;
 
         ActionManager._instance.onMazeFinish += StartMapTransition;
         ActionManager._instance.onTeleport += StartTeleportTransition;
@@ -32,12 +32,17 @@ public class BackgroundController : MonoBehaviour
 
     private void StartMapTransition()
     {
-        mapTransitionRect.DOScale(Vector3.one, mapTransitionAnimationDuration)
-            .OnComplete(() => 
+
+
+        mapTransition.gameObject.SetActive(true);
+        mapTransition.DOFade(1f, mapStartTransitionDuration).OnComplete(() =>
+        {
+            GameManager._instance.ChangeMap();
+            mapTransition.DOFade(0f, mapEndTransitionDuration).OnComplete(() =>
             {
-                GameManager._instance.ChangeMap();
-                mapTransitionRect.DOScale(Vector3.zero, mapTransitionAnimationDuration);
+                mapTransition.gameObject.SetActive(false);
             });
+        });
     }
 
     private void StartTeleportTransition()
