@@ -8,6 +8,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float _peakHeight = 0.5f; // Adjust this value to control how high the player rises
     [SerializeField] private GameObject portalPrefab;
 
+    private AudioManager _audioManager;
     private Transform _cameraTarget;
     private Portal _currentPortal;
     private LevelManager _levelMan;
@@ -22,6 +23,7 @@ public class PlayerMovement : MonoBehaviour
     {
         _cameraTarget = GameObject.FindGameObjectWithTag("CameraTarget").GetComponent<Transform>();
 
+        _audioManager = AudioManager._instance;
         ActionManager._instance.onMazeChange += OnMazeChange;
         _levelMan = LevelManager._instance;
         _cellSize = _levelMan.GetCellSize();
@@ -63,6 +65,7 @@ public class PlayerMovement : MonoBehaviour
         {
             ActionManager._instance.onTeleport?.Invoke();
 
+            _audioManager.Play("teleport");
             transform.position = _currentPortal.GetPosition();
             _cameraTarget.position = transform.position;
 
@@ -75,6 +78,7 @@ public class PlayerMovement : MonoBehaviour
         _isMoving = true;
         float elapsedTime = 0f;
 
+        _audioManager.Play("move_idle");
         while (elapsedTime < 1f)
         {
             float t = elapsedTime;
@@ -125,6 +129,8 @@ public class PlayerMovement : MonoBehaviour
     {
         if (_currentPortal != null)
         {
+            _audioManager.Play("hehe");
+            _audioManager.Play("portal_open");
             _currentPortal.SetPortalState(true);
         }
     }
