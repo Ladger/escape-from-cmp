@@ -6,12 +6,19 @@ using UnityEngine.Audio;
 
 public class AudioManager : Singleton<AudioManager>
 {
-    [SerializeField] private Sound[] sounds;
+    [SerializeField] private Sound[] sfxs;
+    [SerializeField] private Sound[] musics;
+
+    private int _currentIndex;
 
     protected override void Awake()
     {
         base.Awake();
-        foreach (Sound s in sounds)
+
+        GameObject sfxContainer = Instantiate(new GameObject("SFX"));
+        sfxContainer.transform.parent = this.transform;
+
+        foreach (Sound s in sfxs)
         {
             if (s.clip == null)
             {
@@ -19,7 +26,25 @@ public class AudioManager : Singleton<AudioManager>
                 continue;
             }
 
-            s.source = gameObject.AddComponent<AudioSource>();
+            s.source = sfxContainer.AddComponent<AudioSource>();
+            s.source.clip = s.clip;
+            s.source.volume = s.volume;
+            s.source.pitch = s.pitch;
+
+        }
+
+        GameObject musicContainer = Instantiate(new GameObject("Musics"));
+        musicContainer.transform.parent = this.transform;
+
+        foreach (Sound s in musics)
+        {
+            if (s.clip == null)
+            {
+                Debug.LogError($"Sound '{s.name}' has no audio clip assigned!");
+                continue;
+            }
+
+            s.source = musicContainer.AddComponent<AudioSource>();
             s.source.clip = s.clip;
             s.source.volume = s.volume;
             s.source.pitch = s.pitch;
@@ -27,9 +52,15 @@ public class AudioManager : Singleton<AudioManager>
         }
     }
 
-    public void Play(string name)
+    private void Start()
     {
-        Sound s = Array.Find(sounds, sound => sound.name == name);
+        _currentIndex = 0;
+        PlayCurrentMusic();
+    }
+
+    public void PlaySFX(string name)
+    {
+        Sound s = Array.Find(sfxs, sound => sound.name == name);
         if (s == null)
         {
             Debug.LogError($"Sound '{name}' not found!");
@@ -41,8 +72,21 @@ public class AudioManager : Singleton<AudioManager>
             return;
         }
 
-        Debug.Log(name + " is playing");
         s.source.Play();
 
+    }
+
+    public void PlayCurrentMusic()
+    {
+        musics[_currentIndex].source.Play();
+        StartCoroutine(WaitForTrackToEnd(musics[_currentIndex].source));
+    }
+
+    private IEnumerator WaitForTrackToEnd(AudioSource audioSource)
+    {
+        yield return new WaitWhile(() => audioSource.isPlaying);
+
+        _currentIndex = (_currentIndex + 1) % musics.Length;
+        PlayCurrentMusic();
     }
 }

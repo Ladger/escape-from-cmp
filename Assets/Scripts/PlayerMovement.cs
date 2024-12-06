@@ -65,7 +65,7 @@ public class PlayerMovement : MonoBehaviour
         {
             ActionManager._instance.onTeleport?.Invoke();
 
-            _audioManager.Play("teleport");
+            _audioManager.PlaySFX("teleport");
             transform.position = _currentPortal.GetPosition();
             _cameraTarget.position = transform.position;
 
@@ -78,7 +78,7 @@ public class PlayerMovement : MonoBehaviour
         _isMoving = true;
         float elapsedTime = 0f;
 
-        _audioManager.Play("move_idle");
+        _audioManager.PlaySFX("move_idle");
         while (elapsedTime < 1f)
         {
             float t = elapsedTime;
@@ -116,6 +116,7 @@ public class PlayerMovement : MonoBehaviour
                 Destroy(_currentPortal.gameObject);
                 _currentPortal = null;
 
+                _audioManager.PlaySFX("hehe");
                 _canMove = false;
                 ActionManager._instance.onMazeFinish?.Invoke();
             }
@@ -129,8 +130,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (_currentPortal != null)
         {
-            _audioManager.Play("hehe");
-            _audioManager.Play("portal_open");
+            _audioManager.PlaySFX("portal_open");
             _currentPortal.SetPortalState(true);
         }
     }
