@@ -53,23 +53,28 @@ public class PlayerMovement : MonoBehaviour
 
     private void Move(Vector2 vector)
     {
+        Debug.Log("Move is called");
         if (IsMoveable(vector))
         {
+            Debug.Log("Can move");
             StartCoroutine(ParabolicMove(transform.position, transform.position + (Vector3)vector * _cellSize));
         }
     }
 
     private void Teleport()
     {
-        if (_currentPortal.IsPortalOpen())
+        if (_currentPortal != null)
         {
-            ActionManager._instance.onTeleport?.Invoke();
+            if (_currentPortal.IsPortalOpen())
+            {
+                ActionManager._instance.onTeleport?.Invoke();
 
-            _audioManager.PlaySFX("teleport");
-            transform.position = _currentPortal.GetPosition();
-            _cameraTarget.position = transform.position;
+                _audioManager.PlaySFX("teleport");
+                transform.position = _currentPortal.GetPosition();
+                _cameraTarget.position = transform.position;
 
-            _currentPortal.SetPortalState(false);
+                _currentPortal.SetPortalState(false);
+            }
         }
     }
 
@@ -103,17 +108,21 @@ public class PlayerMovement : MonoBehaviour
 
     private bool IsMoveable(Vector2 vector)
     {
+        Debug.Log("IsMoveable called");
         Tile tile = _currentMap.GetTile(transform.position + (Vector3)vector * _cellSize);
+        Debug.Log("tile is derived from current map");
 
         if (tile.tileType == TileType.Blockage)
         {
+            Debug.Log("It is blockage");
             return false;
         }
         else
         {
             if (tile.tileType == TileType.Finish)
             {
-                Destroy(_currentPortal.gameObject);
+                Debug.Log("It is finish");
+                if (_currentPortal != null) Destroy(_currentPortal.gameObject);
                 _currentPortal = null;
 
                 _audioManager.PlaySFX("hehe");
@@ -151,6 +160,7 @@ public class PlayerMovement : MonoBehaviour
     {
         _currentMap = _levelMan.GetCurrentMap();
         transform.position = (Vector3)_levelMan.GetPlayerStartPos();
+        _cameraTarget.position = transform.position;
 
         _canMove = true;
     }

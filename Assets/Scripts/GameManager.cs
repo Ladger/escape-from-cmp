@@ -14,6 +14,7 @@ public class GameManager : Singleton<GameManager>
 
     public void BuildMap(int mapIndex = 0)
     {
+        Debug.Log("Map: " + mapIndex + " is loaded");
         LevelManager._instance.BuildMap(mapCounter);
     }
 

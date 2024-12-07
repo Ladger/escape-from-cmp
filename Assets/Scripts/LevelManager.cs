@@ -171,35 +171,40 @@ public class Map
 
     public bool IsCrossroad(Vector2 position)
     {
-        if (GetTile(position).tileType == TileType.Finish) { return false; }
-
-        int roadCount = 0;
-        float cellSize = LevelManager._instance.GetCellSize();
-
-        if (GetTile(position + Vector2.up * cellSize).tileType == TileType.Path) { roadCount++; }
-        if (GetTile(position + Vector2.down * cellSize).tileType == TileType.Path) { roadCount++; }
-        if (GetTile(position + Vector2.right * cellSize).tileType == TileType.Path) { roadCount++; }
-        if (GetTile(position + Vector2.left * cellSize).tileType == TileType.Path) { roadCount++; }
-
-
-        if (roadCount > 2) { return true; }
-        else { return false; }
+        Debug.Log("IsCrossroad is called");
+        return IsDeadOrCross(position, TileType.Path);
     }
 
     public bool IsDeadEnd(Vector2 position)
     {
-        if (GetTile(position).tileType == TileType.Finish) { return false; }
+        Debug.Log("IsDeadEnd is called");
+        return IsDeadOrCross(position, TileType.Blockage);
+    }
 
-        int blockageCount = 0;
-        float cellSize = LevelManager._instance.GetCellSize();
+    private bool IsDeadOrCross(Vector2 position, TileType tileType)
+    {
+        int counter = 0;
 
-        if (GetTile(position + Vector2.up * cellSize).tileType == TileType.Blockage) { blockageCount++; }
-        if (GetTile(position + Vector2.down * cellSize).tileType == TileType.Blockage) { blockageCount++; }
-        if (GetTile(position + Vector2.right * cellSize).tileType == TileType.Blockage) { blockageCount++; }
-        if (GetTile(position + Vector2.left * cellSize).tileType == TileType.Blockage) { blockageCount++; }
+        int column = (int)position.x;
+        int row = -(int)position.y;
 
-        if (blockageCount > 2) { return true; }
-        else return false;
+        // Check up
+        if (row > 0 && tiles[row - 1][column].tileType == tileType)
+            counter++;
+
+        // Check down
+        if (row < tiles.Count - 1 && tiles[row + 1][column].tileType == tileType)
+            counter++;
+
+        // Check left
+        if (column > 0 && tiles[row][column - 1].tileType == tileType)
+            counter++;
+
+        // Check right
+        if (column < tiles[row].Count - 1 && tiles[row][column + 1].tileType == tileType)
+            counter++;
+
+        return counter > 2;
     }
 }
 
