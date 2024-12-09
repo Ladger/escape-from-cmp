@@ -50,3 +50,4 @@ MonoBehaviour:
   pathPrefab2: {fileID: 965703778325983800, guid: 0bb3879975d937f4ebf12ba4faae4b79, type: 3}
   playerPrefab: {fileID: 2495999777154431119, guid: 92d887ddbb9ed2041aa030e85b94e448, type: 3}
   finishPrefab: {fileID: 24923456359911778, guid: 06637e3758791234680caf75635286b3, type: 3}
+  blinkPrefab: {fileID: 2675056089507538165, guid: 5ca444d463f0c2641b04f206295d9dfc, type: 3}

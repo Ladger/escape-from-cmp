@@ -33,6 +33,8 @@ public class PlayerMovement : MonoBehaviour
         _currentTile = null;
         transform.position = (Vector3)_currentMap.playerStartPos;
         _cameraTarget.position = transform.position;
+
+        if (_currentMap.IsCrossroad(transform.position)) { OnCrossroad(); }
     }
 
     private void OnDestroy()
@@ -97,6 +99,8 @@ public class PlayerMovement : MonoBehaviour
 
         _cameraTarget.position = transform.position;
 
+        CheckBlink();
+
         // When Movement is Ended
         if (_currentMap.IsCrossroad(transform.position)) { OnCrossroad(); }
         if (_currentMap.IsDeadEnd(transform.position)) { OnDeadend(); }
@@ -132,6 +136,16 @@ public class PlayerMovement : MonoBehaviour
         _audioManager.PlaySFX("hehe");
         _canMove = false;
         ActionManager._instance.onMazeFinish?.Invoke();
+    }
+
+    private void CheckBlink()
+    {
+        if (_currentTile.hasBlink && _currentTile.blink != null)
+        {
+            Destroy(_currentTile.blink);
+            _currentTile.blink = null;
+            _currentTile.hasBlink = false;
+        }
     }
 
     private void OnDeadend()

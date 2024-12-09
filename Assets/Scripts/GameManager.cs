@@ -25,4 +25,6 @@ public class GameManager : Singleton<GameManager>
         LevelManager._instance.BuildMap(mapCounter);
         ActionManager._instance.onMazeChange?.Invoke();
     }
+
+    public int GetMapCounter() { return mapCounter; }
 }

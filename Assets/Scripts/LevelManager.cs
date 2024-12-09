@@ -11,6 +11,7 @@ public class LevelManager : Singleton<LevelManager>
     [SerializeField] private GameObject pathPrefab2;
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private GameObject finishPrefab;
+    [SerializeField] private GameObject blinkPrefab;
 
     private List<Map> maps = new();
     private Map currentMap;
@@ -45,10 +46,18 @@ public class LevelManager : Singleton<LevelManager>
 
                 for (int x = 0; x < line.Length; x++)
                 {
+                    bool blink = false;
+
                     // Map characters to ElementType
                     TileType type = TileType.Blockage;
-                    if (line[x] == ' ') type = TileType.Path;
+
+                    if (line[x] == ' ') {
+                        type = TileType.Path;
+                        blink = true; 
+                    
+                    }
                     if (line[x] == 'F') type = TileType.Finish;
+
                     if (line[x] == 'P')
                     {
                         type = TileType.Path;
@@ -56,7 +65,10 @@ public class LevelManager : Singleton<LevelManager>
                     }
 
                     Vector2 position = new Vector2(x, -y);
-                    Tile tile = new Tile(position, type);
+                    Tile tile = new Tile(position, type)
+                    {
+                        hasBlink = blink
+                    };
                     row.Add(tile);
                 }
 
@@ -100,27 +112,33 @@ public class LevelManager : Singleton<LevelManager>
                 Tile tile = map.tiles[y][x];
                 Vector3 worldPosition = new Vector3(tile.position.x * cellSize, tile.position.y * cellSize, 0);
 
+                GameObject tileParent = parent.gameObject;
                 switch (tile.tileType)
                 {
                     case TileType.Blockage:
-                        Instantiate(wallPrefab, worldPosition, Quaternion.identity, parent);
+                        tileParent = Instantiate(wallPrefab, worldPosition, Quaternion.identity, parent);
                         break;
 
                     case TileType.Path:
                         if (x % 2 == checker)
                         {
-                            Instantiate(pathPrefab, worldPosition, Quaternion.identity, parent);
+                            tileParent = Instantiate(pathPrefab, worldPosition, Quaternion.identity, parent);
                         }
                         else
                         {
-                            Instantiate(pathPrefab2, worldPosition, Quaternion.identity, parent);
+                            tileParent = Instantiate(pathPrefab2, worldPosition, Quaternion.identity, parent);
                         }
                         
                         break;
 
                     case TileType.Finish:
-                        Instantiate(finishPrefab, worldPosition, Quaternion.identity, parent);
+                        tileParent = Instantiate(finishPrefab, worldPosition, Quaternion.identity, parent);
                         break;
+                }
+
+                if (tile.hasBlink)
+                {
+                    tile.blink = Instantiate(blinkPrefab, worldPosition, blinkPrefab.transform.rotation, tileParent.transform);
                 }
             }
         }
@@ -209,8 +227,6 @@ public class Map
             counter++;
         }
 
-        string type = tileType == TileType.Blockage ? "blockage" : "path";
-        Debug.Log(type + " count is:" + counter);
         return counter > 2;
     }
 }
@@ -219,11 +235,15 @@ public class Tile
 {
     public Vector2 position;
     public TileType tileType;
+    public GameObject blink;
+    public bool hasBlink;
 
     public Tile(Vector2 position, TileType elementType)
     {
         this.position = position;
         this.tileType = elementType;
+        this.blink = null;
+        this.hasBlink = true;
     }
 }
 
