@@ -14,7 +14,6 @@ public class LevelManager : Singleton<LevelManager>
 
     private List<Map> maps = new();
     private Map currentMap;
-    private Vector2 playerStartPos;
 
     protected override void Awake()
     {
@@ -37,6 +36,7 @@ public class LevelManager : Singleton<LevelManager>
             string[] lines = rawMazes[mapIndex].Trim().Split(new[] { '\n', '\r' }, System.StringSplitOptions.RemoveEmptyEntries);
             rowCount = lines.Length;
 
+            Vector2 playerPos = Vector2.zero;
             for (int y = 0; y < lines.Length; y++)
             {
                 List<Tile> row = new List<Tile>();
@@ -49,7 +49,11 @@ public class LevelManager : Singleton<LevelManager>
                     TileType type = TileType.Blockage;
                     if (line[x] == ' ') type = TileType.Path;
                     if (line[x] == 'F') type = TileType.Finish;
-                    if (line[x] == 'P') type = TileType.Player;
+                    if (line[x] == 'P')
+                    {
+                        type = TileType.Path;
+                        playerPos = new Vector2(x, -y);
+                    }
 
                     Vector2 position = new Vector2(x, -y);
                     Tile tile = new Tile(position, type);
@@ -59,7 +63,10 @@ public class LevelManager : Singleton<LevelManager>
                 tiles.Add(row);
             }
 
-            Map map = new Map(tiles, rowCount, columnCount);
+            Map map = new Map(tiles, rowCount, columnCount)
+            {
+                playerStartPos = playerPos,
+            };
             maps.Add(map);
         }
     }
@@ -114,11 +121,6 @@ public class LevelManager : Singleton<LevelManager>
                     case TileType.Finish:
                         Instantiate(finishPrefab, worldPosition, Quaternion.identity, parent);
                         break;
-
-                    case TileType.Player:
-                        playerStartPos = worldPosition;
-                        Instantiate(pathPrefab, worldPosition, Quaternion.identity, parent);
-                        break;
                 }
             }
         }
@@ -135,7 +137,6 @@ public class LevelManager : Singleton<LevelManager>
     }
 
     public Map GetCurrentMap() { return currentMap; }
-    public Vector2 GetPlayerStartPos() { return playerStartPos; }
     public float GetCellSize() { return cellSize; }
 }
 
@@ -144,12 +145,14 @@ public class Map
     public List<List<Tile>> tiles;
     public int rowCount;
     public int columnCount;
+    public Vector2 playerStartPos;
 
     public Map(List<List<Tile>> tiles, int rowCount, int columnCount)
     {
         this.tiles = tiles;
         this.rowCount = rowCount;
         this.columnCount = columnCount;
+        this.playerStartPos = Vector2.zero;
     }
 
     public Tile GetTile(Vector2 tilePosition)
@@ -171,13 +174,11 @@ public class Map
 
     public bool IsCrossroad(Vector2 position)
     {
-        Debug.Log("IsCrossroad is called");
         return IsDeadOrCross(position, TileType.Path);
     }
 
     public bool IsDeadEnd(Vector2 position)
     {
-        Debug.Log("IsDeadEnd is called");
         return IsDeadOrCross(position, TileType.Blockage);
     }
 
@@ -189,21 +190,27 @@ public class Map
         int row = -(int)position.y;
 
         // Check up
-        if (row > 0 && tiles[row - 1][column].tileType == tileType)
+        if (row > 0 && tiles[row - 1][column].tileType == tileType) {
             counter++;
+        }
 
         // Check down
-        if (row < tiles.Count - 1 && tiles[row + 1][column].tileType == tileType)
-            counter++;
+        if (row < tiles.Count - 1 && tiles[row + 1][column].tileType == tileType) {
+            counter++; 
+        }
 
         // Check left
-        if (column > 0 && tiles[row][column - 1].tileType == tileType)
+        if (column > 0 && tiles[row][column - 1].tileType == tileType){
             counter++;
+        }
 
         // Check right
-        if (column < tiles[row].Count - 1 && tiles[row][column + 1].tileType == tileType)
+        if (column < tiles[row].Count - 1 && tiles[row][column + 1].tileType == tileType) {
             counter++;
+        }
 
+        string type = tileType == TileType.Blockage ? "blockage" : "path";
+        Debug.Log(type + " count is:" + counter);
         return counter > 2;
     }
 }
@@ -224,6 +231,5 @@ public enum TileType
 {
     Blockage,
     Path,
-    Finish,
-    Player
+    Finish
 }

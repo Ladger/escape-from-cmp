@@ -31,7 +31,7 @@ public class PlayerMovement : MonoBehaviour
 
         _currentPortal = null;
         _currentTile = null;
-        transform.position = (Vector3)_levelMan.GetPlayerStartPos();
+        transform.position = (Vector3)_currentMap.playerStartPos;
         _cameraTarget.position = transform.position;
     }
 
@@ -53,10 +53,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void Move(Vector2 vector)
     {
-        Debug.Log("Move is called");
         if (IsMoveable(vector))
         {
-            Debug.Log("Can move");
             StartCoroutine(ParabolicMove(transform.position, transform.position + (Vector3)vector * _cellSize));
         }
     }
@@ -108,31 +106,32 @@ public class PlayerMovement : MonoBehaviour
 
     private bool IsMoveable(Vector2 vector)
     {
-        Debug.Log("IsMoveable called");
         Tile tile = _currentMap.GetTile(transform.position + (Vector3)vector * _cellSize);
-        Debug.Log("tile is derived from current map");
 
         if (tile.tileType == TileType.Blockage)
         {
-            Debug.Log("It is blockage");
             return false;
         }
         else
         {
             if (tile.tileType == TileType.Finish)
             {
-                Debug.Log("It is finish");
-                if (_currentPortal != null) Destroy(_currentPortal.gameObject);
-                _currentPortal = null;
-
-                _audioManager.PlaySFX("hehe");
-                _canMove = false;
-                ActionManager._instance.onMazeFinish?.Invoke();
+                FinishLevel();
             }
 
             _currentTile = tile;
             return true;
         }
+    }
+
+    private void FinishLevel()
+    {
+        if (_currentPortal != null) Destroy(_currentPortal.gameObject);
+        _currentPortal = null;
+
+        _audioManager.PlaySFX("hehe");
+        _canMove = false;
+        ActionManager._instance.onMazeFinish?.Invoke();
     }
 
     private void OnDeadend()
@@ -159,7 +158,7 @@ public class PlayerMovement : MonoBehaviour
     private void OnMazeChange()
     {
         _currentMap = _levelMan.GetCurrentMap();
-        transform.position = (Vector3)_levelMan.GetPlayerStartPos();
+        transform.position = (Vector3)_currentMap.playerStartPos;
         _cameraTarget.position = transform.position;
 
         _canMove = true;
