@@ -9,4 +9,5 @@ public class ActionManager : Singleton<ActionManager>
     public Action onMazeChange;
 
     public Action onTeleport;
+    public Action<Vector2, int> onBlinkCollect;
 }

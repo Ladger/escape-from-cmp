@@ -65,6 +65,11 @@ MonoBehaviour:
     volume: 0.52
     pitch: 1
     source: {fileID: 0}
+  - name: coin_collect
+    clip: {fileID: 8300000, guid: 2a34a90afc46d824ea3b2212d1e2e280, type: 3}
+    volume: 1
+    pitch: 1
+    source: {fileID: 0}
   musics:
   - name: jojo
     clip: {fileID: 8300000, guid: f645c3baa661a144980f0d888deacdb3, type: 3}

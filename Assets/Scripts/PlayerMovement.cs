@@ -99,7 +99,7 @@ public class PlayerMovement : MonoBehaviour
 
         _cameraTarget.position = transform.position;
 
-        CheckBlink();
+        if (CheckBlink()) _audioManager.PlaySFX("coin_collect");
 
         // When Movement is Ended
         if (_currentMap.IsCrossroad(transform.position)) { OnCrossroad(); }
@@ -138,14 +138,20 @@ public class PlayerMovement : MonoBehaviour
         ActionManager._instance.onMazeFinish?.Invoke();
     }
 
-    private void CheckBlink()
+    private bool CheckBlink()
     {
         if (_currentTile.hasBlink && _currentTile.blink != null)
         {
+            ActionManager._instance.onBlinkCollect?.Invoke(_currentTile.position, 50);
+
             Destroy(_currentTile.blink);
             _currentTile.blink = null;
             _currentTile.hasBlink = false;
+
+            return true;
         }
+
+        return false;
     }
 
     private void OnDeadend()

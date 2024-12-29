@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
 {
+
     private int mapCounter = 0;
 
     private void Start()
