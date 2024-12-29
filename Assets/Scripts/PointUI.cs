@@ -11,7 +11,7 @@ public class PointUI : MonoBehaviour
 
     public void SetPointText(Vector2 position, int point)
     {
-        pointText.text = "+" + point.ToString() + "!";
+        pointText.text = "+" + point.ToString();
         gameObject.transform.position = position;
 
         Sequence seq = DOTween.Sequence();
