@@ -82,6 +82,12 @@ public class AudioManager : Singleton<AudioManager>
         StartCoroutine(WaitForTrackToEnd(musics[_currentIndex].source));
     }
 
+    public void StopMusic()
+    {
+        musics[_currentIndex].source.Stop();
+        StopAllCoroutines();
+    }
+
     private IEnumerator WaitForTrackToEnd(AudioSource audioSource)
     {
         yield return new WaitWhile(() => audioSource.isPlaying);

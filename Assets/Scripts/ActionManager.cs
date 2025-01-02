@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class ActionManager : Singleton<ActionManager>
 {
+    public Action<EndType> onGameEnd;
+
     public Action onMazeFinish;
     public Action onMazeChange;
 

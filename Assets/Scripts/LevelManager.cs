@@ -164,6 +164,7 @@ public class LevelManager : Singleton<LevelManager>
 
     public Map GetCurrentMap() { return currentMap; }
     public float GetCellSize() { return cellSize; }
+    public int GetMapCount() { return maps.Count; }
 }
 
 public class Map

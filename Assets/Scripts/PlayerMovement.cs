@@ -142,7 +142,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (_currentTile.hasBlink && _currentTile.blink != null)
         {
-            ActionManager._instance.onBlinkCollect?.Invoke(_currentTile.position, 50);
+            GameManager._instance.UpdateScore(_currentTile.position);
 
             Destroy(_currentTile.blink);
             _currentTile.blink = null;
