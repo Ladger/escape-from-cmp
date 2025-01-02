@@ -23,6 +23,6 @@ public class ScoreboardUI : MonoBehaviour
     private void ChangeScore(Vector2 pos, int point)
     {
         _currentScore += point;
-        _scoreboardText.text = _currentScore.ToString();
+        _scoreboardText.text = "Score:" + _currentScore.ToString();
     }
 }

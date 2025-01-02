@@ -1,3 +1,4 @@
+using NaughtyAttributes;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -15,6 +16,13 @@ public class LevelManager : Singleton<LevelManager>
 
     private List<Map> maps = new();
     private Map currentMap;
+
+    [Button]
+    public void PutMap()
+    {
+        LoadMaps("Assets/Resources/maps.txt");
+        BuildMap(0);
+    }
 
     protected override void Awake()
     {

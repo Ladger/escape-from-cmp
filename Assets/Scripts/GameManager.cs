@@ -5,12 +5,17 @@ using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
 {
-
+    [SerializeField] private float timer = 120f;
     private int mapCounter = 0;
 
     private void Start()
     {
         BuildMap(mapCounter);
+    }
+
+    private void Update()
+    {
+        timer -= Time.deltaTime;
     }
 
     public void BuildMap(int mapIndex = 0)
@@ -28,4 +33,5 @@ public class GameManager : Singleton<GameManager>
     }
 
     public int GetMapCounter() { return mapCounter; }
+    public float GetTimer() { return timer; }
 }
