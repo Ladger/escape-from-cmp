@@ -70,6 +70,16 @@ MonoBehaviour:
     volume: 1
     pitch: 1
     source: {fileID: 0}
+  - name: win
+    clip: {fileID: 8300000, guid: aa488b74895be9e4688f8ef7b1be41ec, type: 3}
+    volume: 1
+    pitch: 1
+    source: {fileID: 0}
+  - name: fail
+    clip: {fileID: 8300000, guid: ad5803491dc03b54abc7bcc339be2b30, type: 3}
+    volume: 1
+    pitch: 1
+    source: {fileID: 0}
   musics:
   - name: jojo
     clip: {fileID: 8300000, guid: f645c3baa661a144980f0d888deacdb3, type: 3}

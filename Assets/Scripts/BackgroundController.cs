@@ -83,6 +83,8 @@ public class BackgroundController : MonoBehaviour
     private void StartEndGameBackground(EndType endType)
     {
         AudioManager._instance.StopMusic();
+        if (endType == EndType.Win) AudioManager._instance.PlaySFX("win");
+        else AudioManager._instance.PlaySFX("fail");
 
         _endType = endType;
 
@@ -120,6 +122,7 @@ public class BackgroundController : MonoBehaviour
         foreach (char letter in sentence.ToCharArray())
         {
             currentSentence += letter;
+            AudioManager._instance.PlaySFX("move_idle");
             mesh.text = currentSentence;
             yield return new WaitForSeconds(typingDuration);
         }
