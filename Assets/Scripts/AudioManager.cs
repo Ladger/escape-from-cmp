@@ -8,6 +8,7 @@ public class AudioManager : Singleton<AudioManager>
 {
     [SerializeField] private Sound[] sfxs;
     [SerializeField] private Sound[] musics;
+    [SerializeField] private bool isInCutscene = false;
 
     private int _currentIndex;
 
@@ -55,7 +56,7 @@ public class AudioManager : Singleton<AudioManager>
     private void Start()
     {
         _currentIndex = 0;
-        PlayCurrentMusic();
+        if (!isInCutscene) PlayCurrentMusic();
     }
 
     public void PlaySFX(string name)
