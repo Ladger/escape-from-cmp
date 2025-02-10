@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class BackgroundController : MonoBehaviour
@@ -138,5 +139,11 @@ public class BackgroundController : MonoBehaviour
             scoreText.gameObject.SetActive(true);
         }
         _stuff.SetActive(true);
+    }
+
+    public void LoadMainMenu()
+    {
+        GameManager._instance.ResetGame();
+        SceneManager.LoadScene("MainMenu");
     }
 }

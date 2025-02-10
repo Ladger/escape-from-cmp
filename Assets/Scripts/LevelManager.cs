@@ -20,7 +20,7 @@ public class LevelManager : Singleton<LevelManager>
     [Button]
     public void PutMap()
     {
-        LoadMaps("Assets/Resources/maps.txt");
+        LoadMaps("maps");
         BuildMap(0);
     }
 
@@ -28,13 +28,19 @@ public class LevelManager : Singleton<LevelManager>
     {
         base.Awake();
 
-        LoadMaps("Assets/Resources/maps.txt");
+        LoadMaps("maps");
     }
 
     private void LoadMaps(string filePath)
     {
-        string[] rawMazes = File.ReadAllText(filePath).Split(new string[] { "---" }, System.StringSplitOptions.RemoveEmptyEntries);
+        TextAsset mapFile = Resources.Load<TextAsset>(filePath.Replace(".txt", ""));
+        if (mapFile == null)
+        {
+            Debug.LogError("Map file not found in Resources folder.");
+            return;
+        }
 
+        string[] rawMazes = mapFile.text.Split(new string[] { "---" }, System.StringSplitOptions.RemoveEmptyEntries);
         maps.Clear();
 
         int rowCount = 0;

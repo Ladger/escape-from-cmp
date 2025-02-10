@@ -56,7 +56,7 @@ MonoBehaviour:
     pitch: 1
     source: {fileID: 0}
   - name: hehe
-    clip: {fileID: 8300000, guid: 9b1963ed603d4014cb02cd8c7c182091, type: 3}
+    clip: {fileID: 8300000, guid: 759c04fa544051548bacdddf462190e2, type: 3}
     volume: 1
     pitch: 1
     source: {fileID: 0}
@@ -85,6 +85,11 @@ MonoBehaviour:
     volume: 1
     pitch: 1
     source: {fileID: 0}
+  - name: yhs
+    clip: {fileID: 8300000, guid: 7898e074254f6e743a99aa4a342fbc6d, type: 3}
+    volume: 1
+    pitch: 1
+    source: {fileID: 0}
   musics:
   - name: jojo
     clip: {fileID: 8300000, guid: f645c3baa661a144980f0d888deacdb3, type: 3}
@@ -101,3 +106,4 @@ MonoBehaviour:
     volume: 1
     pitch: 1
     source: {fileID: 0}
+  isInCutscene: 0
